@@ -1,12 +1,12 @@
 # TimurLittleFamilyBot
 
-Long-polling Telegram reaction bot. It analyzes text and photos with Gemini and sends only appropriate emoji reactions.
+Long-polling Telegram bot. In private chats it converses in Ukrainian and analyzes photos with Gemini. In approved groups it sends only appropriate emoji reactions.
 
 ## Required Cloud secrets
 
 - `TELEGRAM_BOT_TOKEN`
 - `GEMINI_API_KEY`
-- `ALLOWED_CHAT_IDS` — comma-separated test/approved Telegram chat IDs. Empty means no reactions anywhere.
+- `ALLOWED_CHAT_IDS` — comma-separated test/approved Telegram group IDs. Empty means no group reactions; private chats still work.
 
 Optional: `GEMINI_MODEL` (defaults to `gemini-2.0-flash`).
 

@@ -73,6 +73,24 @@ async function chooseEmoji(message) {
   return parseEmoji(data.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("\n") || "");
 }
 
+async function answerPrivateMessage(message) {
+  const parts = [{ text: "Ти доброзичливий Telegram-помічник. Відповідай українською, коротко й по суті." }];
+  const text = message.text || message.caption;
+  if (text) parts.push({ text: text.slice(0, 4000) });
+  const photo = await photoPart(message.photo);
+  if (photo) parts.push(photo);
+  if (parts.length === 1) return null;
+
+  const response = await fetch(`${GEMINI}/${encodeURIComponent(model)}:generateContent`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-goog-api-key": geminiKey },
+    body: JSON.stringify({ contents: [{ role: "user", parts }] }),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(`Gemini: ${data.error?.message || response.status}`);
+  return data.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("\n").trim() || null;
+}
+
 async function loadOffset() {
   try { return JSON.parse(await readFile(stateFile, "utf8")).offset || 0; } catch { return 0; }
 }
@@ -83,7 +101,16 @@ async function saveOffset(offset) {
 }
 
 async function handle(message) {
-  if (!message?.chat?.id || !allowedChats.has(String(message.chat.id))) return;
+  if (!message?.chat?.id) return;
+  if (message.chat.type === "private") {
+    const answer = await answerPrivateMessage(message);
+    if (answer) await telegram("sendMessage", {
+      chat_id: message.chat.id,
+      text: answer.slice(0, 4000),
+    });
+    return;
+  }
+  if (!allowedChats.has(String(message.chat.id))) return;
   const emoji = await chooseEmoji(message);
   if (emoji) await telegram("setMessageReaction", {
     chat_id: message.chat.id,
