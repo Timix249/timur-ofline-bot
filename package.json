@@ -1,0 +1,10 @@
+{
+  "name": "timur-little-family-bot",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node bot.js",
+    "test": "node --test"
+  }
+}
