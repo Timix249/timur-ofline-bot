@@ -10,6 +10,8 @@ Long-polling Telegram bot. In private chats it converses in Ukrainian and analyz
 
 Optional: `GEMINI_MODEL` (defaults to `gemini-2.0-flash`).
 
+Use `.env.example` only as a list of variable names. Add the real values in the Cloud environment's Secrets panel; `.env` is ignored by Git.
+
 ## Run
 
 ```bash
